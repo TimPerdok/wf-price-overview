@@ -1,12 +1,11 @@
-export type ItemsResponse = {
-    payload: {
-        items: Item[]
-    }
-}
+export type ItemsResponse = Item[]
 
 export type Item = {
-    url_name: string,
-    id: string,
-    item_name: string,
-    thumb: string
+    "id": string,
+    "item_name": string,
+    "thumb": string,
+    "url_name": string,
+    "min_price"?: number,
+    "average_price"?: number,
+    "last_update": string
 }

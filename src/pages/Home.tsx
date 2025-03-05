@@ -1,9 +1,9 @@
 import { themeQuartz } from 'ag-grid-community';
 import { AgGridReact } from "ag-grid-react";
-import React, { useMemo } from 'react';
+import React, { use, useMemo } from 'react';
 
 // Import ModuleRegistry and the required module
-import { Card, TextField } from '@mui/material';
+import { Card, Link, TextField } from '@mui/material';
 import {
     AllCommunityModule,
     ModuleRegistry,
@@ -13,6 +13,7 @@ import { FlexColumn } from '../components/layout/Flex';
 import useLocalStorage, { LocalStorageKeys } from '../hooks/useLocalStorage';
 import { theme } from '../main';
 import { Item, ItemsResponse } from '../types/WfMarket';
+import WfMarketApi from '../api/WfMarketApi';
 
 // Register the module
 ModuleRegistry.registerModules([
@@ -25,41 +26,31 @@ const GridCard = styled(Card)`
 `
 
 export default function Home() {
-    const [marketData, setMarketData] = useLocalStorage<string>(LocalStorageKeys.MARKET_DATA, "");
-    const marketDataJSON: ItemsResponse = useMemo(() => {
-        try {
-            return JSON.parse(marketData);
-        } catch (e) {
-            return null;
-        }
-    }, [marketData]);
-    console.log("rereneder")
+    const items = use(WfMarketApi.getItems)
     return (
         <FlexColumn $fullWidth $gapY='1rem'>
-            <Card>
-                <a href="https://api.warframe.market/v1/items" target="_blank" rel="noopener noreferrer">tet</a>
-                <TextField label="Market Data"
-                    fullWidth
-                    multiline
-                    rows={10}
-                    variant="filled"
-                    defaultValue={marketData}
-                    onChange={({ target: { value } }) => setMarketData(value)} />
-            </Card>
             <GridCard>
                 <AgGridReact<Item>
                     theme={themeQuartz
                         .withParams({
-                            backgroundColor: "transparent",
+                            backgroundColor: theme.palette.background.default,
                             textColor: theme.palette.text.primary,
+                            menuTextColor: theme.palette.text.primary,
                             borderColor: theme.palette.grey[800]
 
                         })}
                     columnDefs={[
-                        { field: 'id', flex: 1 },
-                        { field: 'url_name', flex: 1 },
+                        { field: 'id', flex: 1, filter: true },
+                        { field: 'url_name', flex: 1, filter: true, cellRenderer: (params) => <Link href={`https://warframe.market/items/${params.value}`}>{params.value}</Link> },
+                        { field: 'min_price', flex: 1, filter: true },
+                        { field: "average_price", flex: 1, filter: true },
+                        { field: "last_update", flex: 1, cellRenderer: (params) => params.value ? new Date(params.value).toLocaleString() : "-" }
                     ]}
-                    rowData={marketDataJSON?.payload.items}>
+                    defaultColDef={{
+                        filter: true,
+                        floatingFilter: true,
+                    }}
+                    rowData={items}>
                 </AgGridReact>
             </GridCard>
         </FlexColumn>

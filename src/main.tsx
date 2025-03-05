@@ -18,8 +18,8 @@ export const theme = createTheme({
       secondary: "#fff",
     },
     background: {
-      default: "rgb(28, 28, 28)",
-      paper: "rgb(28, 28, 28)",
+      default: "rgb(25, 25, 25)",
+      paper: "rgb(25, 25, 25)",
     },
     secondary: {
       main: "#e45456",
