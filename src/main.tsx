@@ -50,7 +50,7 @@ function App(): React.ReactElement {
       <ThemeProvider theme={theme}>
         <SCThemeProvider theme={theme}>
           <ToastProvider>
-            <BrowserRouter>
+            <BrowserRouter basename="/wf-price-overview">
               <Routes>
                 {
                   Object.values(ROUTES).map((route) => (
