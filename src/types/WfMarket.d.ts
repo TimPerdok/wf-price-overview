@@ -7,5 +7,8 @@ export type Item = {
     "url_name": string,
     "min_price"?: number,
     "average_price"?: number,
-    "last_update": string
+    "last_update": string,
+    detail: {
+        tags: string[],
+    }
 }
