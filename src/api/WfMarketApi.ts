@@ -1,10 +1,9 @@
-import { ItemsResponse } from "../types/WfMarket";
+import EnvConfig from "../EnvConfig";
+import { ItemsResponse } from "../types/Backend";
 
 export default class ProxyApi {
-    static BASE_URL = `https://wf-server.onmogeloos.workers.dev`;
-
     static getItems = new Promise<ItemsResponse>((resolve, reject) => {
-        fetch(`${ProxyApi.BASE_URL}/items`)
+        fetch(`${EnvConfig.BACKEND_URL}/items`)
             .then(response => response.json())
             .then(resolve)
             .catch(reject)

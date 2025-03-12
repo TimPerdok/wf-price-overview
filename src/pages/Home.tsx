@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import { FlexColumn } from '../components/layout/Flex';
 import useLocalStorage, { LocalStorageKeys } from '../hooks/useLocalStorage';
 import { theme } from '../main';
-import { Item, ItemsResponse } from '../types/WfMarket';
+import { Item, ItemsResponse } from '../types/Backend';
 import WfMarketApi from '../api/WfMarketApi';
 import { Spinner } from '../components/Spinner';
 
@@ -56,8 +56,8 @@ function Grid() {
                 { field: 'url_name', flex: 1, filter: true, cellRenderer: (params) => <Link href={`https://warframe.market/items/${params.value}`}>{params.value}</Link> },
                 { field: "item_name", flex: 1, filter: true },
                 { field: 'min_price', flex: 1, filter: true },
-                { field: "average_price", flex: 1, filter: true },
-                { field: "detail.tags", flex: 1, filter: true, valueFormatter: (params) => params.value?.join(", ") },
+                { field: "avg_price", flex: 1, filter: true },
+                { field: "tags", flex: 1, filter: true, valueFormatter: (params) => params.value?.join(", ") },
                 // { field: "last_update", flex: 1, cellRenderer: (params) => params.value ? new Date(params.value).toLocaleString() : "-" }
             ]}
             defaultColDef={{

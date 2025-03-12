@@ -3,8 +3,9 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider as SCThemeProvider } from "styled-components";
-import { ToastProvider } from "./components/toast/ToastProvider.tsx";
 import PageContainer from "./components/layout/PageContainer.tsx";
+import { ToastProvider } from "./components/toast/ToastProvider.tsx";
+import EnvConfig from "./EnvConfig.ts";
 import Home from "./pages/Home.tsx";
 
 export const theme = createTheme({
@@ -50,7 +51,7 @@ function App(): React.ReactElement {
       <ThemeProvider theme={theme}>
         <SCThemeProvider theme={theme}>
           <ToastProvider>
-            <BrowserRouter basename="/wf-price-overview">
+            <BrowserRouter basename={EnvConfig.basename}>
               <Routes>
                 {
                   Object.values(ROUTES).map((route) => (
