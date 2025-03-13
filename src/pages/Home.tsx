@@ -1,20 +1,20 @@
 import { themeQuartz } from 'ag-grid-community';
 import { AgGridReact } from "ag-grid-react";
-import React, { Suspense, use, useMemo } from 'react';
+import React, { Suspense } from 'react';
 
 // Import ModuleRegistry and the required module
-import { Card, Link, TextField } from '@mui/material';
+import { Card, Link } from '@mui/material';
 import {
     AllCommunityModule,
     ModuleRegistry,
 } from 'ag-grid-community';
 import styled from 'styled-components';
-import { FlexColumn } from '../components/layout/Flex';
-import useLocalStorage, { LocalStorageKeys } from '../hooks/useLocalStorage';
-import { theme } from '../main';
-import { Item, ItemsResponse } from '../types/Backend';
 import WfMarketApi from '../api/WfMarketApi';
+import { FlexColumn } from '../components/layout/Flex';
 import { Spinner } from '../components/Spinner';
+import useApi from '../hooks/useApi';
+import { theme } from '../main';
+import { ItemProfile, ItemsResponse } from '../types/Backend';
 
 // Register the module
 ModuleRegistry.registerModules([
@@ -41,9 +41,11 @@ export default function Home() {
 }
 
 function Grid() {
-    const items = use(WfMarketApi.getItems)
+    const { data, error } = useApi<ItemsResponse>(WfMarketApi.getItems)
+
     return (<GridCard>
-        <AgGridReact<Item>
+        <AgGridReact<ItemProfile>
+            rowData={data?.items}
             theme={themeQuartz
                 .withParams({
                     backgroundColor: theme.palette.background.default,
@@ -53,18 +55,25 @@ function Grid() {
                 })}
             columnDefs={[
                 { field: 'id', flex: 1, hide: true },
-                { field: 'url_name', flex: 1, filter: true, cellRenderer: (params) => <Link href={`https://warframe.market/items/${params.value}`}>{params.value}</Link> },
-                { field: "item_name", flex: 1, filter: true },
-                { field: 'min_price', flex: 1, filter: true },
-                { field: "avg_price", flex: 1, filter: true },
+                { field: 'urlName', flex: 1, filter: true, cellRenderer: (params) => <Link href={`https://warframe.market/items/${params.value}`}>{params.value}</Link> },
+                { field: "itemName", flex: 1, filter: true },
+                { field: 'minPrice', flex: 1, filter: true },
+                { field: "avgPrice", flex: 1, filter: true },
                 { field: "tags", flex: 1, filter: true, valueFormatter: (params) => params.value?.join(", ") },
-                // { field: "last_update", flex: 1, cellRenderer: (params) => params.value ? new Date(params.value).toLocaleString() : "-" }
             ]}
             defaultColDef={{
                 filter: true,
                 floatingFilter: true,
             }}
-            rowData={items}>
+        // rowModelType="infinite"
+        // datasource={{
+        //     getRows: async (params) => {
+        //         const filter = params.filterModel as FilterModel;
+        //         const res = await WfMarketApi.getItems(params.startRow, params.endRow, filter)
+        //         params.successCallback(res.items, res.total)
+        //     }
+        // }}
+        >
         </AgGridReact>
     </GridCard>)
 }

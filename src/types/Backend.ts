@@ -1,10 +1,13 @@
-export type ItemsResponse = Item[]
+export type ItemsResponse = {
+    items: ItemProfile[],
+    total: number
+}
 
-export type Item = {
+export type ItemProfile = {
     id: string,
-    url_name: string,
-    item_name: string,
-    min_price: number,
-    avg_price: number,
-    tags: string[]
+    itemName: string,
+    urlName: string,
+    minPrice: number,
+    avgPrice: number,
+    timestamp: string,
 }
