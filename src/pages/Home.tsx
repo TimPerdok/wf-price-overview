@@ -1,9 +1,9 @@
 import { themeQuartz } from 'ag-grid-community';
 import { AgGridReact } from "ag-grid-react";
-import React, { Suspense, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 // Import ModuleRegistry and the required module
-import { Button, Card, CardContent, CardHeader, Link, Typography } from '@mui/material';
+import { Button, Card, CardContent, CardHeader, Link } from '@mui/material';
 import {
     AllCommunityModule,
     ModuleRegistry,
@@ -11,11 +11,9 @@ import {
 import styled from 'styled-components';
 import WfMarketApi from '../api/WfMarketApi';
 import { FlexColumn } from '../components/layout/Flex';
-import { Spinner } from '../components/Spinner';
-import useApi from '../hooks/useApi';
+import useLocalStorage, { LocalStorageKeys } from '../hooks/useLocalStorage';
 import { theme } from '../main';
 import { ItemProfile, ItemsResponse } from '../types/Backend';
-import useLocalStorage, { LocalStorageKeys } from '../hooks/useLocalStorage';
 import { Metadata } from '../types/Metadata';
 
 // Register the module
@@ -36,7 +34,10 @@ export default function Home() {
 
     const fetchData = useCallback(() =>
         WfMarketApi.getItems()
-            .then((data) => data && !localData?.items && setLocalData(data))
+            .then((data) => {
+                console.log(data, data && !localData?.items )
+                data && !localData?.items && setLocalData(data)
+            })
             .then(() => {
                 setMetadata({ last_updated: new Date().toString() })
             }), [localData, setLocalData, setMetadata])
