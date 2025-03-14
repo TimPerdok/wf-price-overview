@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 
 export enum LocalStorageKeys {
-  MARKET_DATA = "MARKET_DATA",
+  items = "items",
+  metadata = "metadata",
 }
 
-type Any = string | number | boolean | object | Any[];
+type Serializable = string | number | boolean | null | Serializable[] | { [key: string]: Serializable };
 
 type setValue<T> = (v: T) => void;
 
-export default function useLocalStorage<T extends Any>(
+export default function useLocalStorage<T extends Serializable>(
   lsKey: LocalStorageKeys,
   initialValue: T,
 ) {

@@ -1,9 +1,9 @@
 import { themeQuartz } from 'ag-grid-community';
 import { AgGridReact } from "ag-grid-react";
-import React, { Suspense } from 'react';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
 
 // Import ModuleRegistry and the required module
-import { Card, Link } from '@mui/material';
+import { Button, Card, CardContent, CardHeader, Link, Typography } from '@mui/material';
 import {
     AllCommunityModule,
     ModuleRegistry,
@@ -15,6 +15,8 @@ import { Spinner } from '../components/Spinner';
 import useApi from '../hooks/useApi';
 import { theme } from '../main';
 import { ItemProfile, ItemsResponse } from '../types/Backend';
+import useLocalStorage, { LocalStorageKeys } from '../hooks/useLocalStorage';
+import { Metadata } from '../types/Metadata';
 
 // Register the module
 ModuleRegistry.registerModules([
@@ -27,53 +29,67 @@ const GridCard = styled(Card)`
 `
 
 export default function Home() {
+    const [localData, setLocalData] = useLocalStorage<ItemsResponse>(LocalStorageKeys.items, { items: [], total: 0 })
+    const [metadata, setMetadata] = useLocalStorage<Metadata>(LocalStorageKeys.metadata, {})
+    const [isLoading, setIsLoading] = useState(false)
+
+
+    const fetchData = useCallback(() =>
+        WfMarketApi.getItems()
+            .then((data) => data && !localData?.items && setLocalData(data))
+            .then(() => {
+                setMetadata({ last_updated: new Date().toString() })
+            }), [localData, setLocalData, setMetadata])
+
+    useEffect(() => {
+        setIsLoading(true)
+        fetchData().finally(() => setIsLoading(false))
+    }, [])
+
     return (
         <FlexColumn $fullWidth $gapY='1rem'>
-            <Suspense fallback={
-                <Card>
-                    <Spinner />
-                </Card>
-            }>
-                <Grid />
-            </Suspense>
+            <Card>
+                <CardContent>
+                    <CardHeader
+                        action={<Button disabled={isLoading} onClick={fetchData}>Refresh</Button>}
+                        title="Last updated: "
+                        subheader={metadata?.last_updated}
+                    />
+                </CardContent>
+            </Card>
+            <Grid data={localData} />
         </FlexColumn>
     );
 }
 
-function Grid() {
-    const { data, error } = useApi<ItemsResponse>(WfMarketApi.getItems)
-
-    return (<GridCard>
-        <AgGridReact<ItemProfile>
-            rowData={data?.items}
-            theme={themeQuartz
-                .withParams({
-                    backgroundColor: theme.palette.background.default,
-                    textColor: theme.palette.text.primary,
-                    menuTextColor: theme.palette.text.primary,
-                    borderColor: theme.palette.grey[800]
-                })}
-            columnDefs={[
-                { field: 'id', flex: 1, hide: true },
-                { field: 'urlName', flex: 1, filter: true, cellRenderer: (params) => <Link href={`https://warframe.market/items/${params.value}`}>{params.value}</Link> },
-                { field: "itemName", flex: 1, filter: true },
-                { field: 'minPrice', flex: 1, filter: true },
-                { field: "avgPrice", flex: 1, filter: true },
-                { field: "tags", flex: 1, filter: true, valueFormatter: (params) => params.value?.join(", ") },
-            ]}
-            defaultColDef={{
-                filter: true,
-                floatingFilter: true,
-            }}
-        // rowModelType="infinite"
-        // datasource={{
-        //     getRows: async (params) => {
-        //         const filter = params.filterModel as FilterModel;
-        //         const res = await WfMarketApi.getItems(params.startRow, params.endRow, filter)
-        //         params.successCallback(res.items, res.total)
-        //     }
-        // }}
-        >
-        </AgGridReact>
-    </GridCard>)
+function Grid({ data }: { data: ItemsResponse }) {
+    return (<>
+        <GridCard>
+            <AgGridReact<ItemProfile>
+                rowData={data?.items}
+                theme={themeQuartz
+                    .withParams({
+                        backgroundColor: theme.palette.background.default,
+                        textColor: theme.palette.text.primary,
+                        menuTextColor: theme.palette.text.primary,
+                        borderColor: theme.palette.grey[800],
+                        borderRadius: theme.shape.borderRadius
+                    })}
+                columnDefs={[
+                    { field: 'id', flex: 1, hide: true },
+                    { field: 'urlName', flex: 1, filter: true, cellRenderer: (params) => <Link href={`https://warframe.market/items/${params.value}`}>{params.value}</Link> },
+                    { field: "itemName", flex: 1, filter: true },
+                    { field: 'minPrice', flex: 1, filter: true },
+                    { field: "avgPrice", flex: 1, filter: true },
+                    { field: "tags", flex: 1, filter: true, valueFormatter: (params) => params.value?.join(", ") },
+                    { field: "timestamp", flex: 1, filter: true, valueFormatter: (params) => params.value ? new Date(params.value).toLocaleString() : "" }
+                ]}
+                defaultColDef={{
+                    filter: true,
+                    floatingFilter: true,
+                }}
+            >
+            </AgGridReact>
+        </GridCard>
+    </>)
 }

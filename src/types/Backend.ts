@@ -6,8 +6,9 @@ export type ItemsResponse = {
 export type ItemProfile = {
     id: string,
     itemName: string,
-    urlName: string,
+    urlName: string,    
     minPrice: number,
     avgPrice: number,
     timestamp: string,
+    tags: string[]
 }

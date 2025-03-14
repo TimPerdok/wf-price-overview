@@ -27,6 +27,16 @@ export const theme = createTheme({
     },
   },
   components: {
+    MuiPaper: {
+      defaultProps: {
+        elevation: 0,
+      },
+      styleOverrides: {
+        root: {
+          borderRadius: "8px"
+        },
+      }
+    },
     MuiFilledInput: {
       styleOverrides: {
         root: {
