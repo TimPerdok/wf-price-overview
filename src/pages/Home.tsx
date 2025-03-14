@@ -31,13 +31,9 @@ export default function Home() {
     const [metadata, setMetadata] = useLocalStorage<Metadata>(LocalStorageKeys.metadata, {})
     const [isLoading, setIsLoading] = useState(false)
 
-
     const fetchData = useCallback(() =>
         WfMarketApi.getItems()
-            .then((data) => {
-                console.log(data, data && !localData?.items )
-                data && !localData?.items && setLocalData(data)
-            })
+            .then((data) => data && setLocalData(data))
             .then(() => {
                 setMetadata({ last_updated: new Date().toString() })
             }), [localData, setLocalData, setMetadata])
