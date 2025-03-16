@@ -10,5 +10,6 @@ export type ItemProfile = {
     minPrice: number,
     avgPrice: number,
     timestamp: string,
-    tags: string[]
+    tags: string[],
+    thumb: string
 }
