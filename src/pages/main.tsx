@@ -3,10 +3,13 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider as SCThemeProvider } from "styled-components";
-import PageContainer from "./components/layout/PageContainer.tsx";
-import { ToastProvider } from "./components/toast/ToastProvider.tsx";
-import EnvConfig from "./EnvConfig.ts";
-import Home from "./pages/Home.tsx";
+
+import PageContainer from "../components/layout/PageContainer";
+import { ToastProvider } from "../components/toast/ToastProvider";
+import EnvConfig from "../EnvConfig";
+import Home from "./Home";
+import ItemPage from "./ItemPage";
+
 
 export const theme = createTheme({
   palette: {

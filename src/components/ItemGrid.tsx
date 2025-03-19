@@ -11,7 +11,7 @@ import {
 import styled from 'styled-components';
 import { FlexColumn } from '../components/layout/Flex';
 import { ALL_ROUTES, theme } from '../main';
-import { ItemProfile, ItemsResponse } from '../types/Backend';
+import { ItemsResponse, ItemSummary } from '../types/Backend';
 
 
 // Register the module
@@ -27,7 +27,7 @@ const GridCard = styled(Card)`
 export default function ItemGrid({ data }: { data: ItemsResponse }) {
     return (<>
         <GridCard>
-            <AgGridReact<ItemProfile>
+            <AgGridReact<ItemSummary>
                 rowData={data?.items}
                 theme={themeQuartz
                     .withParams({

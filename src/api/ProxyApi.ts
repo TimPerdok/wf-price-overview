@@ -16,7 +16,7 @@ export default class ProxyApi {
         return json as ItemsResponse
     }
 
-    static async getItem(urlName: string): Promise<ItemProfile | null> {
+    static async getItemProfile(urlName: string): Promise<ItemProfile | null> {
         if (!urlName) return null;
         const res = await fetch(`${EnvConfig.BACKEND_URL}/item/${urlName}`)
         const json = await res.json()   
