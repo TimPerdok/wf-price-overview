@@ -10,7 +10,7 @@ import {
 } from 'ag-grid-community';
 import styled from 'styled-components';
 import { FlexColumn } from '../components/layout/Flex';
-import { theme } from '../main';
+import { ALL_ROUTES, theme } from '../main';
 import { ItemProfile, ItemsResponse } from '../types/Backend';
 
 
@@ -52,12 +52,13 @@ export default function ItemGrid({ data }: { data: ItemsResponse }) {
                             />
                         </FlexColumn>
                     },
-                    { field: 'urlName', flex: 1, filter: true, cellRenderer: (params) => <Link href={`https://warframe.market/items/${params.value}`}>{params.value}</Link> },
+                    { field: 'urlName', flex: 1, filter: true, cellRenderer: (params) => <Link href={ALL_ROUTES.ITEM.createUrl(params.value)}>{params.value}</Link> },
                     { field: "itemName", flex: 1, filter: true },
                     { field: 'minPrice', flex: 1, filter: true },
                     { field: "avgPrice", flex: 1, filter: true },
                     { field: "tags", flex: 1, filter: true, valueFormatter: (params) => params.value?.join(", ") },
-                    { field: "timestamp", flex: 1, filter: true, valueFormatter: (params) => params.value ? new Date(params.value).toLocaleString() : "" }
+                    // { field: "timestamp", flex: 1, filter: true, valueFormatter: (params) => params.value ? new Date(params.value).toLocaleString() : "" }
+                    { headerName: "Links", cellRenderer: ({data}) => <Link href={`https://warframe.market/items/${data.urlName}`}>Market</Link> },
                 ]}
                 defaultColDef={{
                     filter: true,

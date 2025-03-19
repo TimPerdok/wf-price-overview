@@ -10,8 +10,6 @@ const Container = styled.div`
     width: 100%;
     max-width: 100vw;
     padding: 4rem 2rem;
-    display: flex;
-    justify-content: center;
   `;
 
 export default function PageContainer({ children }: Props) {

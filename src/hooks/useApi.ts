@@ -1,20 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-export default function useApi<ResultType>(api: Function) {
+export default function useApi<ResultType>(apiCall: () => Promise<ResultType>) {   
     const [state, setState] = useState<{
         data: ResultType | null,
         error: any | null,
-        loading: boolean
+        isLoading: boolean
     }>({
         data: null,
         error: null,
-        loading: true
+        isLoading: true
     })
 
     useEffect(() => {
-        api()
-            .then((data: ResultType) => setState({ data, error: null, loading: false }))
-            .catch((error) => setState({ data: null, error, loading: false }))
+        apiCall()
+            .then((data: ResultType) => {
+                setState({ data, error: null, isLoading: false })
+            })
+            .catch((error) => {
+                setState({ data: null, error, isLoading: false })
+            })
     }, [])
 
     return state

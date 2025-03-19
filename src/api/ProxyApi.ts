@@ -1,6 +1,5 @@
-import { url } from "inspector";
 import EnvConfig from "../EnvConfig";
-import { ItemsResponse } from "../types/Backend";
+import { ItemProfile, ItemsResponse } from "../types/Backend";
 
 export default class ProxyApi {
     static async getItems(begin?: number, end?: number, filter?: object): Promise<ItemsResponse> {
@@ -15,5 +14,12 @@ export default class ProxyApi {
         const res = await fetch(url.toString())
         const json = await res.json()
         return json as ItemsResponse
+    }
+
+    static async getItem(urlName: string): Promise<ItemProfile | null> {
+        if (!urlName) return null;
+        const res = await fetch(`${EnvConfig.BACKEND_URL}/item/${urlName}`)
+        const json = await res.json()   
+        return json as ItemProfile
     }
 }

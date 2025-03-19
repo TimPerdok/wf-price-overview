@@ -29,9 +29,9 @@ export default function LastUpdatedCard({
     const [timeAgoString, setTimeAgoString] = useState("")
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            lastUpdated && setTimeAgoString(formatRelativeTime(lastUpdated))
-        }, 1000)
+        const updateString = () => lastUpdated && setTimeAgoString(formatRelativeTime(lastUpdated))
+        updateString()
+        const interval = setInterval(updateString, 1000)
         return () => clearInterval(interval)
     })
 
@@ -41,7 +41,7 @@ export default function LastUpdatedCard({
                 <CardHeader
                     action={<Button disabled={isLoading} onClick={onClick}>Refresh</Button>}
                     title="Last updated: "
-                    subheader={timeAgoString || "Never"}
+                    subheader={timeAgoString}
                 />
             </CardContent>
         </Card>

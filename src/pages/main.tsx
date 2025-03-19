@@ -7,8 +7,6 @@ import PageContainer from "./components/layout/PageContainer.tsx";
 import { ToastProvider } from "./components/toast/ToastProvider.tsx";
 import EnvConfig from "./EnvConfig.ts";
 import Home from "./pages/Home.tsx";
-import ItemPage from "./pages/ItemPage.tsx";
-import type { AllRoutes, Route as RouteType } from "./types/Route.ts";
 
 export const theme = createTheme({
   palette: {
@@ -49,20 +47,16 @@ export const theme = createTheme({
   },
 });
 
-
-
-export const ALL_ROUTES = {
+export const ROUTES = {
   HOME: {
     path: "/",
     element: <Home />,
-    createUrl: (urlName: string) => `/`,
-  } as RouteType<"/">,
+  },
   ITEM: {
-    path: "/item/:urlName",
+    path: "/item/:id",
     element: <ItemPage />,
-    createUrl: (urlName: string) => `/item/${urlName}`,
-  } as RouteType<"/item/:urlName">,
-} as const;
+  },
+};
 
 
 function App(): React.ReactElement {
@@ -74,7 +68,7 @@ function App(): React.ReactElement {
             <BrowserRouter basename={EnvConfig.basename}>
               <Routes>
                 {
-                  Object.values(ALL_ROUTES).map((route) => (
+                  Object.values(ROUTES).map((route) => (
                     <Route key={route.path} path={route.path} element={route.element} />
                   ))
                 }
