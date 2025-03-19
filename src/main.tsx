@@ -8,7 +8,7 @@ import { ToastProvider } from "./components/toast/ToastProvider.tsx";
 import EnvConfig from "./EnvConfig.ts";
 import Home from "./pages/Home.tsx";
 import ItemPage from "./pages/ItemPage.tsx";
-import type { AllRoutes, Route as RouteType } from "./types/Route.ts";
+import type { Route as RouteType } from "./types/Route.ts";
 
 export const theme = createTheme({
   palette: {

@@ -22,5 +22,6 @@ export type ItemProfile = {
     avgPrice: number,
     timestamp: string,
     tags: string[],
-    thumb: string
+    thumb: string,
+    description?: string,
 }

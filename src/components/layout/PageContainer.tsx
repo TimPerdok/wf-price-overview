@@ -6,7 +6,6 @@ interface Props {
 }
 
 const Container = styled.div`
-    min-width: 500px;
     width: 100%;
     max-width: 100vw;
     padding: 4rem 2rem;
