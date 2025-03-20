@@ -13,14 +13,14 @@ import theme from "./Theme.ts";
 
 export const ALL_ROUTES = {
   HOME: {
-    path: "/",
+    path: `${EnvConfig.basename}`,
     element: <Home />,
-    createUrl: (urlName: string) => `/`,
+    createUrl: (urlName: string) => `${EnvConfig.basename}`,
   } as RouteType<"/">,
   ITEM: {
     path: "/item/:urlName",
     element: <ItemPage />,
-    createUrl: (urlName: string) => `/item/${urlName}`,
+    createUrl: (urlName: string) => `${EnvConfig.basename}item/${urlName}`,
   } as RouteType<"/item/:urlName">,
 } as const;
 
@@ -38,10 +38,6 @@ function App(): React.ReactElement {
                     <Route key={route.path} path={route.path} element={route.element} />
                   ))
                 }
-                <Route
-                  path="*"
-                  element={<Navigate to="/" replace={true} />}
-                />
               </Routes>
             </HashRouter>
           </ToastProvider>
