@@ -54,13 +54,18 @@ export default function ItemGrid({ data }: { data: ItemsResponse }) {
                             />
                         </FlexColumn>
                     },
-                    { field: 'urlName', flex: 1, filter: true, cellRenderer: (params) => <InternalLink to={ALL_ROUTES.ITEM.createUrl(params.value)}>{params.value}</InternalLink> },
+                    {
+                        field: 'urlName', flex: 1, filter: true, cellRenderer: (params) => <InternalLink
+                            to={ALL_ROUTES.ITEM.createUrl({
+                                urlName: params.value
+                            })}>{params.value}</InternalLink>
+                    },
                     { field: "itemName", flex: 1, filter: true },
                     { field: 'minPrice', flex: 1, filter: true },
                     { field: "avgPrice", flex: 1, filter: true },
                     { field: "tags", flex: 1, filter: true, valueFormatter: (params) => params.value?.join(", ") },
                     // { field: "timestamp", flex: 1, filter: true, valueFormatter: (params) => params.value ? new Date(params.value).toLocaleString() : "" }
-                    { headerName: "Links", cellRenderer: ({data}) => <Link href={`https://warframe.market/items/${data.urlName}`}>Market</Link> },
+                    { headerName: "Links", cellRenderer: ({ data }) => <Link href={`https://warframe.market/items/${data.urlName}`}>Market</Link> },
                 ]}
                 defaultColDef={{
                     filter: true,

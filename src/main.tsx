@@ -1,28 +1,20 @@
 import { ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, HashRouter, Navigate, Route, Routes } from "react-router";
+import { HashRouter, Route, Routes } from "react-router";
 import { ThemeProvider as SCThemeProvider } from "styled-components";
 import PageContainer from "./components/layout/PageContainer.tsx";
 import { ToastProvider } from "./components/toast/ToastProvider.tsx";
 import EnvConfig from "./EnvConfig.ts";
 import Home from "./pages/Home.tsx";
 import ItemPage from "./pages/ItemPage.tsx";
-import type { Route as RouteType } from "./types/Route.ts";
 import theme from "./Theme.ts";
+import { Route as RouteClass } from "./types/Route.ts";
 
 export const ALL_ROUTES = {
-  HOME: {
-    path: `${EnvConfig.basename}`,
-    element: <Home />,
-    createUrl: (urlName: string) => `${EnvConfig.basename}`,
-  } as RouteType<"/">,
-  ITEM: {
-    path: "/item/:urlName",
-    element: <ItemPage />,
-    createUrl: (urlName: string) => `${EnvConfig.basename}item/${urlName}`,
-  } as RouteType<"/item/:urlName">,
-} as const;
+  HOME: new RouteClass("HOME", "/", <Home />),
+  ITEM: new RouteClass("ITEM", "/item/:urlName", <ItemPage />),
+}
 
 
 function App(): React.ReactElement {

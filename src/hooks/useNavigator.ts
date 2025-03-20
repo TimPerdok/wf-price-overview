@@ -1,5 +1,4 @@
-import { useLocation, useNavigate } from "react-router";
-import { ALL_ROUTES } from "../main";
+import { useNavigate } from "react-router";
 
 export default function useNavigator() {
     const navigate = useNavigate();
