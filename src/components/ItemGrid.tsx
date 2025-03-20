@@ -10,8 +10,10 @@ import {
 } from 'ag-grid-community';
 import styled from 'styled-components';
 import { FlexColumn } from '../components/layout/Flex';
-import { ALL_ROUTES, theme } from '../main';
+import { ALL_ROUTES } from '../main';
+import theme from "../Theme";
 import { ItemsResponse, ItemSummary } from '../types/Backend';
+import InternalLink from './InternalLink';
 
 
 // Register the module
@@ -52,7 +54,7 @@ export default function ItemGrid({ data }: { data: ItemsResponse }) {
                             />
                         </FlexColumn>
                     },
-                    { field: 'urlName', flex: 1, filter: true, cellRenderer: (params) => <Link href={ALL_ROUTES.ITEM.createUrl(params.value)}>{params.value}</Link> },
+                    { field: 'urlName', flex: 1, filter: true, cellRenderer: (params) => <InternalLink to={ALL_ROUTES.ITEM.createUrl(params.value)}>{params.value}</InternalLink> },
                     { field: "itemName", flex: 1, filter: true },
                     { field: 'minPrice', flex: 1, filter: true },
                     { field: "avgPrice", flex: 1, filter: true },

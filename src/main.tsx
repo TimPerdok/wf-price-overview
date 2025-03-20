@@ -1,7 +1,7 @@
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, HashRouter, Route, Routes } from "react-router";
 import { ThemeProvider as SCThemeProvider } from "styled-components";
 import PageContainer from "./components/layout/PageContainer.tsx";
 import { ToastProvider } from "./components/toast/ToastProvider.tsx";
@@ -9,47 +9,7 @@ import EnvConfig from "./EnvConfig.ts";
 import Home from "./pages/Home.tsx";
 import ItemPage from "./pages/ItemPage.tsx";
 import type { Route as RouteType } from "./types/Route.ts";
-
-export const theme = createTheme({
-  palette: {
-    mode: "dark",
-    primary: {
-      main: "rgb(134, 203, 146)",
-    },
-    text: {
-      primary: "#fff",
-      secondary: "#fff",
-    },
-    background: {
-      default: "rgb(25, 25, 25)",
-      paper: "rgb(25, 25, 25)",
-    },
-    secondary: {
-      main: "#e45456",
-    },
-  },
-  components: {
-    MuiPaper: {
-      defaultProps: {
-        elevation: 0,
-      },
-      styleOverrides: {
-        root: {
-          borderRadius: "8px"
-        },
-      }
-    },
-    MuiFilledInput: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "transparent",
-        },
-      },
-    },
-  },
-});
-
-
+import theme from "./Theme.ts";
 
 export const ALL_ROUTES = {
   HOME: {
@@ -71,7 +31,7 @@ function App(): React.ReactElement {
       <ThemeProvider theme={theme}>
         <SCThemeProvider theme={theme}>
           <ToastProvider>
-            <BrowserRouter basename={EnvConfig.basename}>
+            <HashRouter basename={EnvConfig.basename}>
               <Routes>
                 {
                   Object.values(ALL_ROUTES).map((route) => (
@@ -79,7 +39,7 @@ function App(): React.ReactElement {
                   ))
                 }
               </Routes>
-            </BrowserRouter>
+            </HashRouter>
           </ToastProvider>
         </SCThemeProvider>
       </ThemeProvider>
