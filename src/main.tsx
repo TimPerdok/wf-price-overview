@@ -1,7 +1,7 @@
 import { ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, HashRouter, Route, Routes } from "react-router";
+import { BrowserRouter, HashRouter, Navigate, Route, Routes } from "react-router";
 import { ThemeProvider as SCThemeProvider } from "styled-components";
 import PageContainer from "./components/layout/PageContainer.tsx";
 import { ToastProvider } from "./components/toast/ToastProvider.tsx";
@@ -38,6 +38,10 @@ function App(): React.ReactElement {
                     <Route key={route.path} path={route.path} element={route.element} />
                   ))
                 }
+                <Route
+                  path="*"
+                  element={<Navigate to="/" replace={true} />}
+                />
               </Routes>
             </HashRouter>
           </ToastProvider>
