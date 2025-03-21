@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, Button } from "@mui/material";
+import { Card, CardContent, CardHeader, Button, CircularProgress, Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 function formatRelativeTime(date: Date): string {
@@ -25,7 +25,11 @@ export default function LastUpdatedCard({
     lastUpdated,
     isLoading,
     onClick
-}: { lastUpdated?: Date, isLoading: boolean, onClick: () => void }) {
+}: {
+    lastUpdated?: Date,
+    isLoading: boolean,
+    onClick: () => void
+}) {
     const [timeAgoString, setTimeAgoString] = useState("")
 
     useEffect(() => {
@@ -39,9 +43,25 @@ export default function LastUpdatedCard({
         <Card>
             <CardContent>
                 <CardHeader
-                    action={<Button disabled={isLoading} onClick={onClick}>Refresh</Button>}
+                    action={
+                        <Box sx={{ m: 1, position: 'relative' }}>
+                            <Button disabled={isLoading} onClick={onClick}>Refresh</Button>
+                            {isLoading && (
+                                <CircularProgress
+                                    size={24}
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        marginTop: '-12px',
+                                        marginLeft: '-12px',
+                                    }}
+                                />
+                            )}
+                        </Box>
+                    }
                     title="Last updated: "
-                    subheader={timeAgoString}
+                    subheader={isLoading ? "..." : timeAgoString}
                 />
             </CardContent>
         </Card>

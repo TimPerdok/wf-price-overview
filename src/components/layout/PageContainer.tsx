@@ -8,7 +8,7 @@ interface Props {
 const Container = styled.div`
     width: 100%;
     max-width: 100vw;
-    padding: 4rem 2rem;
+    padding: 2rem;
   `;
 
 export default function PageContainer({ children }: Props) {

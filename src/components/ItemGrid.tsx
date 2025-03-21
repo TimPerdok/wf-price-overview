@@ -22,8 +22,9 @@ ModuleRegistry.registerModules([
 ]);
 
 const GridCard = styled(Card)`
-    height: 500px;
     width: 100%;
+    flex-grow: 1;
+    padding: 1rem;
 `
 
 export default function ItemGrid({ data }: { data: ItemsResponse }) {
@@ -37,7 +38,8 @@ export default function ItemGrid({ data }: { data: ItemsResponse }) {
                         textColor: theme.palette.text.primary,
                         menuTextColor: theme.palette.text.primary,
                         borderColor: theme.palette.grey[800],
-                        borderRadius: theme.shape.borderRadius
+                        wrapperBorder: "transparent",
+                        borderRadius: theme.shape.borderRadius,
                     })}
                 columnDefs={[
                     { field: 'id', flex: 1, hide: true },

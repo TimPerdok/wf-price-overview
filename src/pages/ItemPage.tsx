@@ -1,31 +1,31 @@
-import { Box, Button, Card, CardContent, CardHeader, Grid2, Link } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, Grid2, Link, Typography } from '@mui/material';
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import ProxyApi from '../api/ProxyApi';
 import ChartWrapper from '../components/ChartJsWrapper';
 import { FlexColumn } from '../components/layout/Flex';
 import useApi from '../hooks/useApi';
+import useNavigator from '../hooks/useNavigator';
 import useUrlParams from '../hooks/useUrlParams';
 import { ALL_ROUTES } from '../main';
-import { ItemsResponse, ItemSummary, PricePoint } from '../types/Backend';
-import useNavigator from '../hooks/useNavigator';
+import { ItemSummary, PricePoint } from '../types/Backend';
+import ArrowBackIcon from '@mui/icons-material/ArrowBackIos';
 
 export default function ItemPage() {
-    const {navigateTo} = useNavigator()
+    const { navigateTo } = useNavigator()
     const { urlName } = useUrlParams(ALL_ROUTES.ITEM)
     const { data, error, isLoading } = useApi(() => ProxyApi.getItemProfile(urlName ?? ""))
     if (isLoading) return <div>Loading...</div>
 
-    const defaultItemProfile = { item: { itemName: "", description: "" } as Partial<ItemSummary>, prices: [] as PricePoint[] } ;
+    const defaultItemProfile = { item: { itemName: "", description: "" } as Partial<ItemSummary>, prices: [] as PricePoint[] };
     const { item, prices } = data || defaultItemProfile
     const { itemName, description } = item;
 
     return <>
         <FlexColumn>
-            <div>
-            <Button variant="text" onClick={() => navigateTo(ALL_ROUTES.HOME.path)}>Back</Button>
-            
-            </div>
+            <Box sx={{ marginBottom: 1 }}>
+                <Button variant="text" startIcon={<ArrowBackIcon/>} onClick={() => navigateTo(ALL_ROUTES.HOME.path)}>Back</Button>
+            </Box>
             <Grid2 container spacing={2}>
                 <Grid2 size={{ xs: 12 }} sx={{ width: { sm: 200 } }}>
                     <Card>

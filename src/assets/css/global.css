@@ -1,24 +1,27 @@
+#root {
+  display: contents;
+  --color-primary: rgb(134, 203, 146);
+  --color-gray: #424242;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  
+  scrollbar-color: var(--color-gray) transparent !important;
 }
 
-#root {
-  display: contents;
-}
 
 html {
   overflow: hidden;
 }
 
 body {
-  background: linear-gradient(
-    rgb(22, 22, 29) 0%,
-    rgb(31, 31, 58) 35%,
-    rgb(59, 47, 74) 71%,
-    rgb(84, 62, 110) 100%
-  );
+  background: linear-gradient(rgb(22, 22, 29) 0%,
+      rgb(31, 31, 58) 35%,
+      rgb(59, 47, 74) 71%,
+      rgb(84, 62, 110) 100%);
   height: 100vh;
   width: 100vw;
   display: flex;

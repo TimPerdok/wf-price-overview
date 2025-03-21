@@ -16,6 +16,7 @@ export type FlexProps = {
     | "space-around";
   children?: React.ReactNode;
   $fullWidth?: boolean;
+  $fullHeight?: boolean;
   $gapX?: string;
   $gapY?: string;
 };
@@ -25,6 +26,7 @@ const FlexRowStyled = styled.div<FlexProps>`
   justify-content: ${(props) => props.$alignHorizontal};
   align-items: ${(props) => props.$alignVertical};
   width: ${(props) => props.$fullWidth ? "100%" : "auto"};
+  height: ${(props) => props.$fullHeight ? "100%" : "auto"};
   gap: ${(props) => props.$gapY ? props.$gapY : "0px"} ${(props) =>
   props.$gapX ? props.$gapX : "0px"};
 `;
@@ -39,6 +41,7 @@ const FlexColumnStyled = styled.div<FlexProps>`
   justify-content: ${(props) => props.$alignVertical};
   align-items: ${(props) => props.$alignHorizontal};
   width: ${(props) => props.$fullWidth ? "100%" : "auto"};
+  height: ${(props) => props.$fullHeight ? "100%" : "auto"};
   gap: ${(props) => props.$gapY ? props.$gapY : "0px"} ${(props) => props.$gapX ? props.$gapX : "0px"};
 `;
 
