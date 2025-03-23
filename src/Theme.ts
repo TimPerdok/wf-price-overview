@@ -15,7 +15,7 @@ const theme = createTheme({
             paper: "rgb(25, 25, 25)",
         },
         secondary: {
-            main: "#e45456",
+            main: "rgb(34, 34, 34)",
         },
     },
     components: {

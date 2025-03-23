@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-export default function useApi<ResultType>(apiCall: () => Promise<ResultType>) {   
+export default function useApi<ResultType>(apiCall: () => Promise<ResultType>, dependencies: any[]) {   
     const [state, setState] = useState<{
         data: ResultType | null,
         error: any | null,
@@ -19,7 +19,7 @@ export default function useApi<ResultType>(apiCall: () => Promise<ResultType>) {
             .catch((error) => {
                 setState({ data: null, error, isLoading: false })
             })
-    }, [])
+    }, dependencies)
 
     return state
 }

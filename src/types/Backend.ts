@@ -21,7 +21,24 @@ export type PricePoint = {
     avgPrice: number
 }
 
+export type Item = {
+    id: string
+    ducats: number,
+    itemName: string,
+    itemsInSet: string[],
+    tags: string[],
+    thumb: string,
+    urlName: string,
+    description: string
+}
+
+export type SetItemProfile = {
+    item: Item,
+    latestPrice: PricePoint,
+}
+
 export type ItemProfile = {
-    item: ItemSummary,
-    prices: PricePoint[]
+    item: Item,
+    prices: PricePoint[],
+    setItemProfiles: SetItemProfile[]
 }
