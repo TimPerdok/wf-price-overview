@@ -23,12 +23,22 @@ export default function ItemPage() {
     if (isLoading) return <div>Loading...</div>
 
     const defaultItemProfile = {
-        item: { itemName: "", description: "" } as Partial<Item>,
+        item: { itemName: "", description: "", urlName: "" } as Partial<Item>,
         prices: [] as PricePoint[],
         setItemProfiles: [] as SetItemProfile[]
     };
     const { item, prices, setItemProfiles } = data || defaultItemProfile
     const { itemName, description } = item;
+
+    const setItemProfile = setItemProfiles.find(p => p.item.tags.includes("set"))
+
+    const setNameToBaseName = (name: string) => name.replace(/ Set$/, "")
+    const itemNameToBaseName = (name: string) => {
+        const lastPart = name.split(" ").slice(-1)[0]
+        if (["Relic", "Imprint"].includes(lastPart)) name = name.split(" ").slice(0, -1).join(" ")
+        return name;
+    }
+    const wikiUrlName = encodeURIComponent(setItemProfile ? setNameToBaseName(setItemProfile.item.itemName) : itemNameToBaseName(itemName ?? ""))
 
     return <>
         <FlexColumn>
@@ -51,11 +61,12 @@ export default function ItemPage() {
                                     href={`https://warframe.market/items/${item.urlName}`}>
                                     Warframe market
                                 </Button>
-                                <Button variant="text"
-                                    startIcon={<Image src={wfWikiIcon} alt="Warframe Wiki" sx={{ height: "1.4rem"}} />}
-                                    href={`https://wiki.warframe.com/w/${item.urlName}`}>
-                                    Wiki
-                                </Button>
+                                {!!item.itemName
+                                    && <Button variant="text"
+                                        startIcon={<Image src={wfWikiIcon} alt="Warframe Wiki" sx={{ height: "1.2rem" }} />}
+                                        href={`https://wiki.warframe.com/?search=${wikiUrlName}`}>
+                                        Wiki
+                                    </Button>}
                             </Stack>
                         </Box>
                         <CardHeader
@@ -95,10 +106,10 @@ export default function ItemPage() {
                                     height={400}
                                 ></Line>
                             </ChartWrapper>
-                            <Box sx={{ marginTop: 2 }}>
+                            {setItemProfiles.length > 1 && <Box sx={{ marginTop: 2 }}>
                                 <Typography variant='h6' gutterBottom>Set items</Typography>
                                 <SetItemsView setItemProfiles={setItemProfiles} />
-                            </Box>
+                            </Box>}
                         </CardContent>
                     </Card>
                 </Grid2>

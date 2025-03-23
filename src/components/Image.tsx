@@ -12,6 +12,12 @@ export default function Image(props: BoxProps<"img">) {
 }
 
 export function ItemImage(props: { item: { thumb?: string | null } } & BoxProps<"img">) {
+    let imageProps: BoxProps<"img"> = {
+        ...props,
+        // @ts-ignore
+        item: undefined
+    }
+
     return <Box sx={{
         display: "flex",
         justifyContent: "center",
@@ -23,7 +29,7 @@ export function ItemImage(props: { item: { thumb?: string | null } } & BoxProps<
         backgroundColor: theme.palette.background.default,
     }}>
         <Image
-            {...props}
+            {...imageProps}
             sx={{
                 objectFit: "contain",
                 height: "100%",
