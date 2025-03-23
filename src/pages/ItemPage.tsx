@@ -3,7 +3,9 @@ import { Box, Button, Card, CardContent, CardHeader, Divider, Grid2, Link, Stack
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import ProxyApi from '../api/ProxyApi';
+// @ts-ignore
 import wfMarketIcon from "../assets/images/wf-market-512x512.webp";
+// @ts-ignore
 import wfWikiIcon from "../assets/images/wf-wiki-78px.webp";
 import ChartWrapper from '../components/ChartJsWrapper';
 import Image, { ItemImage } from '../components/Image';
@@ -41,79 +43,84 @@ export default function ItemPage() {
     const wikiUrlName = encodeURIComponent(setItemProfile ? setNameToBaseName(setItemProfile.item.itemName) : itemNameToBaseName(itemName ?? ""))
 
     return <>
-        <FlexColumn>
-            <Box sx={{ marginBottom: 1 }}>
+        <FlexColumn $gapY='1rem'>
+            <Box>
                 <Button variant="text" startIcon={<ArrowBackIcon />} onClick={() => navigateTo(ALL_ROUTES.HOME.path)}>Back</Button>
             </Box>
-            <Grid2 container spacing={2}>
-                <Grid2 size={{ xs: 12 }} sx={{ width: { sm: 200 } }}>
-                    <ItemImage
-                        sx={{ minWidth: "100px" }}
-                        item={item}
-                    />
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: "grow" }}>
-                    <Card>
-                        <Box sx={{ paddingLeft: 2, paddingTop: 2, paddingRight: 2 }}>
-                            <Stack direction="row" spacing={2}>
-                                <Button variant="text"
-                                    startIcon={<Image src={wfMarketIcon} alt="Warframe Market" sx={{ height: "2rem", width: "2rem" }} />}
-                                    href={`https://warframe.market/items/${item.urlName}`}>
-                                    Warframe market
-                                </Button>
-                                {!!item.itemName
-                                    && <Button variant="text"
-                                        startIcon={<Image src={wfWikiIcon} alt="Warframe Wiki" sx={{ height: "1.2rem" }} />}
-                                        href={`https://wiki.warframe.com/?search=${wikiUrlName}`}>
-                                        Wiki
-                                    </Button>}
-                            </Stack>
-                        </Box>
+            <Card>
+                <CardContent>
+                    <Stack direction="row" spacing={2}>
+                        <Button variant="text"
+                            startIcon={<Image src={wfMarketIcon} alt="Warframe Market" sx={{ height: "2rem", width: "2rem" }} />}
+                            href={`https://warframe.market/items/${item.urlName}`}>
+                            Warframe market
+                        </Button>
+                        {!!item.itemName
+                            && <Button variant="text"
+                                startIcon={<Image src={wfWikiIcon} alt="Warframe Wiki" sx={{ height: "1.2rem" }} />}
+                                href={`https://wiki.warframe.com/?search=${wikiUrlName}`}>
+                                Wiki
+                            </Button>}
+                    </Stack>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardContent>
+                    <FlexRow>
+                        <ItemImage
+                            sx={{ minWidth: "100px" }}
+                            item={item}
+                        />
                         <CardHeader
                             title={itemName}
                             subheader={description} />
-                        <CardContent>
-                            <ChartWrapper>
-                                <Line
-                                    options={{
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        scales: {
-                                            x: {
-                                                type: "time",
-                                                time: {
-                                                    unit: "day"
-                                                }
-                                            },
-                                            y: {
-                                                beginAtZero: true,
-                                                ticks: {
-                                                    precision: 0
-                                                }
-                                            }
+                    </FlexRow>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader title="Price History" />
+                <CardContent>
+                    <ChartWrapper>
+                        <Line
+                            options={{
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        type: "time",
+                                        time: {
+                                            unit: "day"
                                         }
-                                    }}
-                                    data={{
-                                        labels: prices.map(p => p.timestamp),
-                                        datasets: [{
-                                            label: 'Minimum Price',
-                                            data: prices.map(p => p.minPrice),
-                                        }, {
-                                            label: 'Average Price (out of 3)',
-                                            data: prices.map(p => p.avgPrice),
-                                        }]
-                                    }}
-                                    height={400}
-                                ></Line>
-                            </ChartWrapper>
-                            {setItemProfiles.length > 1 && <Box sx={{ marginTop: 2 }}>
-                                <Typography variant='h6' gutterBottom>Set items</Typography>
-                                <SetItemsView setItemProfiles={setItemProfiles} />
-                            </Box>}
-                        </CardContent>
-                    </Card>
-                </Grid2>
-            </Grid2>
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            precision: 0
+                                        }
+                                    }
+                                }
+                            }}
+                            data={{
+                                labels: prices.map(p => p.timestamp),
+                                datasets: [{
+                                    label: 'Minimum Price',
+                                    data: prices.map(p => p.minPrice),
+                                }, {
+                                    label: 'Average Price (out of 3)',
+                                    data: prices.map(p => p.avgPrice),
+                                }]
+                            }}
+                            height={400}
+                        ></Line>
+                    </ChartWrapper>
+                </CardContent>
+            </Card>
+            {setItemProfiles.length > 1 && <Card>
+                <CardHeader title="Set Items" />
+                <CardContent>
+                    <SetItemsView setItemProfiles={setItemProfiles} />
+                </CardContent>
+            </Card>}
         </FlexColumn >
     </>
 }
@@ -125,29 +132,27 @@ function SetItemsView({ setItemProfiles }: { setItemProfiles: SetItemProfile[] }
     const separateMinPrice = sortedItemsInSet.reduce((acc, p) => acc + p.latestPrice.minPrice, 0);
     const difference = (setItemProfile?.latestPrice?.minPrice ?? 0) - separateMinPrice;
     return <>
-        <FlexColumn $gapY='1rem'>
-            <FlexRow $gapX='1rem'>
-                {setItemProfile && <>
-                    <Box flexGrow={1} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <FlexColumn $alignHorizontal='center'>
-                            <Box sx={{ marginBottom: "1rem" }}>
-                                <ItemImage
-                                    item={setItemProfile.item}
-                                />
-                            </Box>
-                            <ItemLink item={setItemProfile?.item} />
-                            {setItemProfile.latestPrice.minPrice} platinum
-                        </FlexColumn>
-                    </Box>
-                </>}
-                <Box flexGrow={1}>
+        <FlexColumn $gapY='1rem' $fullWidth>
+            <Grid2 container>
+                {setItemProfile && <Grid2 size={{ xs: 12, sm: 6 }} alignContent={{ xs: "center" }}>
+                    <FlexColumn $alignHorizontal='center'>
+                        <Box sx={{ marginBottom: "1rem" }}>
+                            <ItemImage
+                                item={setItemProfile.item}
+                            />
+                        </Box>
+                        <ItemLink item={setItemProfile?.item} />
+                        {setItemProfile.latestPrice.minPrice} platinum
+                    </FlexColumn>
+                </Grid2>}
+                <Grid2>
                     <FlexColumn $gapY='1rem'>
                         {sortedItemsInSet.map(p =>
                             <SetItemView key={p.item.urlName} setItemProfile={p} />
                         )}
                     </FlexColumn>
-                </Box>
-            </FlexRow>
+                </Grid2>
+            </Grid2>
             <FlexRow $gapX='1rem'>
                 <Box flexGrow={1}>
                     <Divider sx={{ marginBottom: "1rem" }} />
@@ -166,7 +171,8 @@ function SetItemsView({ setItemProfiles }: { setItemProfiles: SetItemProfile[] }
                     </Typography>
                 </Box>
             </FlexRow>
-        </FlexColumn></>
+        </FlexColumn >
+    </>
 }
 
 function PriceDifference({ difference, invert }: { difference: number, invert?: boolean }) {

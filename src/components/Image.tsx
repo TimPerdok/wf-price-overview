@@ -27,6 +27,7 @@ export function ItemImage(props: { item: { thumb?: string | null } } & BoxProps<
         padding: "1rem",
         aspectRatio: 1,
         backgroundColor: theme.palette.background.default,
+        height: "fit-content",
     }}>
         <Image
             {...imageProps}
