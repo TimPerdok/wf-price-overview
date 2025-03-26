@@ -22,7 +22,6 @@ ModuleRegistry.registerModules([
 ]);
 
 const GridCard = styled(Card)`
-    width: 100%;
     flex-grow: 1;
     padding: 1rem;
 `

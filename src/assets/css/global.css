@@ -1,20 +1,9 @@
-#root {
-  display: contents;
-  --color-primary: rgb(134, 203, 146);
-  --color-gray: #424242;
-}
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  
+
   scrollbar-color: var(--color-gray) transparent !important;
-}
-
-
-html {
-  overflow: hidden;
 }
 
 body {
@@ -22,15 +11,16 @@ body {
       rgb(31, 31, 58) 35%,
       rgb(59, 47, 74) 71%,
       rgb(84, 62, 110) 100%);
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+#root {
+  --color-primary: rgb(134, 203, 146);
+  --color-gray: #424242;
   height: 100vh;
   width: 100vw;
-  display: flex;
-  justify-content: center;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-  overflow-y: auto;
   overflow-x: hidden;
-  color: white;
-
+  overflow-y: auto;
 }
 
 h1 {
