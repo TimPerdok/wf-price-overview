@@ -29,7 +29,10 @@ export type Item = {
     tags: string[],
     thumb: string,
     urlName: string,
-    description: string
+    description: string,
+    isRoot: boolean | null,
+    wikiLink: string | null,
+    quantityForSet: number
 }
 
 export type SetItemProfile = {

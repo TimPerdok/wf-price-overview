@@ -7,9 +7,9 @@ import PageContainer from "./components/layout/PageContainer.tsx";
 import { ToastProvider } from "./components/toast/ToastProvider.tsx";
 import EnvConfig from "./EnvConfig.ts";
 import Home from "./pages/Home.tsx";
-import ItemPage from "./pages/ItemPage.tsx";
 import theme from "./Theme.ts";
 import { Route as RouteClass } from "./types/Route.ts";
+import ItemPage from "./pages/item/ItemPage.tsx";
 
 export const ALL_ROUTES = {
   HOME: new RouteClass("HOME", "/", <Home />),
