@@ -1,10 +1,10 @@
 import React from "react";
 import { Line } from "react-chartjs-2";
 import ChartWrapper from "../../components/ChartJsWrapper";
-import { PricePoint } from "../../types/Backend";
 import { group } from "console";
+import { PriceMeasurement } from "../../types/Backend";
 
-export default function PriceChart({ prices }: { prices: PricePoint[] }) {
+export default function PriceChart({ prices }: { prices: PriceMeasurement[] }) {
     return <ChartWrapper>
         <Line
             options={{
@@ -30,10 +30,10 @@ export default function PriceChart({ prices }: { prices: PricePoint[] }) {
                 labels: prices.map(p => Date.parse(p.timestamp)),
                 datasets: [{
                     label: 'Minimum Price',
-                    data: prices.map(p => p.minPrice),
+                    data: prices.map(p => p.minimum),
                 }, {
                     label: 'Average Price (out of 3)',
-                    data: prices.map(p => p.avgPrice),
+                    data: prices.map(p => p.averageLastThreeSales),
                 }]
             }}
             height={400}

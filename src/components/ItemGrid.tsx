@@ -14,6 +14,7 @@ import { ALL_ROUTES } from '../main';
 import theme from "../Theme";
 import { ItemsResponse, ItemSummary } from '../types/Backend';
 import InternalLink from './InternalLink';
+import PriceDifference from './PriceDifference';
 
 
 // Register the module
@@ -27,6 +28,7 @@ const GridCard = styled(Card)`
 `
 
 export default function ItemGrid({ data }: { data: ItemsResponse }) {
+
     return (<>
         <GridCard>
             <AgGridReact<ItemSummary>
@@ -62,8 +64,13 @@ export default function ItemGrid({ data }: { data: ItemsResponse }) {
                             })}>{params.value}</InternalLink>
                     },
                     { field: "itemName", flex: 1, filter: true },
-                    { field: 'minPrice', flex: 1, filter: true },
-                    { field: "avgPrice", flex: 1, filter: true },
+                    { field: 'price.minimum', flex: 1, filter: true },
+                    { field: "price.averageLastThreeSales", flex: 1, filter: true },
+                    {
+                        field: "setPriceDifference",
+                        flex: 1,
+                        filter: true
+                    },
                     { field: "tags", flex: 1, filter: true, valueFormatter: (params) => params.value?.join(", ") },
                     // { field: "timestamp", flex: 1, filter: true, valueFormatter: (params) => params.value ? new Date(params.value).toLocaleString() : "" }
                     { headerName: "Links", cellRenderer: ({ data }) => <Link href={`https://warframe.market/items/${data.urlName}`}>Market</Link> },

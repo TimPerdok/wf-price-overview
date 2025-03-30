@@ -1,22 +1,20 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBackIos';
-import { Box, Button, Card, CardContent, CardHeader, Divider, Grid2, Link, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, Divider, Grid2, Stack, Typography } from '@mui/material';
 import React from 'react';
-import { Line } from 'react-chartjs-2';
 import ProxyApi from '../../api/ProxyApi';
 // @ts-ignore
 import wfMarketIcon from "../../assets/images/wf-market-512x512.webp";
 // @ts-ignore
 import wfWikiIcon from "../../assets/images/wf-wiki-78px.webp";
-import ChartWrapper from '../../components/ChartJsWrapper';
 import Image, { ItemImage } from '../../components/Image';
 import InternalLink from '../../components/InternalLink';
 import { FlexColumn, FlexRow } from '../../components/layout/Flex';
+import PriceDifference from '../../components/PriceDifference';
 import useApi from '../../hooks/useApi';
 import useNavigator from '../../hooks/useNavigator';
 import useUrlParams from '../../hooks/useUrlParams';
 import { ALL_ROUTES } from '../../main';
-import theme from '../../Theme';
-import { Item, PricePoint, SetItemProfile } from '../../types/Backend';
+import { Item, PriceMeasurement, SetItemProfile } from '../../types/Backend';
 import PriceChart from './PriceChart';
 
 export default function ItemPage() {
@@ -27,7 +25,7 @@ export default function ItemPage() {
 
     const defaultItemProfile = {
         item: { itemName: "", description: "", urlName: "" } as Partial<Item>,
-        prices: [] as PricePoint[],
+        prices: [] as PriceMeasurement[],
         setItemProfiles: [] as SetItemProfile[]
     };
     const { item, prices, setItemProfiles } = data || defaultItemProfile
@@ -103,8 +101,8 @@ function SetItemsView({ setItemProfiles }: { setItemProfiles: SetItemProfile[] }
     const setItemProfile = setItemProfiles.find(p => p.item.isRoot) ?? setItemProfiles.find(p => p.item.tags.includes("set"))
     const sortedItemsInSet = setItemProfiles.sort((a, b) => a.item.itemName.localeCompare(b.item.itemName))
         .filter(p => p.item.id !== setItemProfile?.item.id)
-    const separateMinPrice = sortedItemsInSet.reduce((acc, p) => acc + (p.latestPrice.minPrice * (p.item.quantityForSet ?? 1)), 0);
-    const difference = (setItemProfile?.latestPrice?.minPrice ?? 0) - separateMinPrice;
+    const separateMinPrice = sortedItemsInSet.reduce((acc, p) => acc + (p.latestPrice.minimum * (p.item.quantityForSet ?? 1)), 0);
+    const difference = (setItemProfile?.latestPrice?.minimum ?? 0) - separateMinPrice;
 
     return <>
         <FlexColumn $gapY='1rem' $fullWidth>
@@ -117,7 +115,7 @@ function SetItemsView({ setItemProfiles }: { setItemProfiles: SetItemProfile[] }
                             />
                         </Box>
                         <ItemLink item={setItemProfile?.item} />
-                        {setItemProfile.latestPrice.minPrice} platinum
+                        {setItemProfile.latestPrice.minimum} platinum
                     </FlexColumn>
                 </Grid2>}
                 <Grid2>
@@ -132,7 +130,7 @@ function SetItemsView({ setItemProfiles }: { setItemProfiles: SetItemProfile[] }
                 <Box flexGrow={1}>
                     <Divider sx={{ marginBottom: "1rem" }} />
                     <Typography sx={{ marginRight: "0.5rem", display: "inline" }}>
-                        {setItemProfile?.latestPrice.minPrice} platinum
+                        {setItemProfile?.latestPrice.minimum} platinum
                         {" "}
                         <PriceDifference difference={difference} invert />
                     </Typography>
@@ -150,14 +148,6 @@ function SetItemsView({ setItemProfiles }: { setItemProfiles: SetItemProfile[] }
     </>
 }
 
-function PriceDifference({ difference, invert }: { difference: number, invert?: boolean }) {
-    const color = difference > 0 && !invert ? theme.palette.success.main : theme.palette.error.main
-    const sign = invert ? "+" : "-"
-    return <Typography variant="caption" sx={{ color, verticalAlign: "middle" }}>
-        {`(${sign}${Math.abs(difference)})`}
-    </Typography>
-}
-
 function ItemLink({ item }: { item: Item }) {
     return <InternalLink to={ALL_ROUTES.ITEM.createUrl({ urlName: item.urlName })}>{item.itemName}</InternalLink>
 }
@@ -173,10 +163,10 @@ function SetItemView({ setItemProfile: { item, latestPrice } }: { setItemProfile
             </Box>
             <FlexColumn>
                 <ItemLink item={item} />
-                {(item.quantityForSet ?? 1) * latestPrice.minPrice}
+                {(item.quantityForSet ?? 1) * latestPrice.minimum}
                 {" "}
                 platinum
-                {item.quantityForSet > 1 && ` (${latestPrice?.minPrice} each)`}
+                {item.quantityForSet > 1 && ` (${latestPrice?.minimum} each)`}
             </FlexColumn>
         </FlexRow>
     </>

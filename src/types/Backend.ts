@@ -3,22 +3,16 @@ export type ItemsResponse = {
     total: number
 }
 
-export type ItemSummary = {
-    id: string,
-    itemName: string,
-    urlName: string,    
-    minPrice: number,
-    avgPrice: number,
-    timestamp: string,
-    tags: string[],
-    thumb: string,
-    description?: string
+export type ItemSummary = Item & {
+    price: PriceMeasurement,
+    setPriceDifference: number,
 }
 
-export type PricePoint = {
-    timestamp: string,
-    minPrice: number,
-    avgPrice: number
+export type PriceMeasurement = {
+    itemId: string,
+    minimum: number,
+    averageLastThreeSales: number,
+    timestamp: string
 }
 
 export type Item = {
@@ -37,11 +31,11 @@ export type Item = {
 
 export type SetItemProfile = {
     item: Item,
-    latestPrice: PricePoint,
+    latestPrice: PriceMeasurement,
 }
 
 export type ItemProfile = {
     item: Item,
-    prices: PricePoint[],
+    prices: PriceMeasurement[],
     setItemProfiles: SetItemProfile[]
 }
