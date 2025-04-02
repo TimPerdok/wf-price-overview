@@ -16,8 +16,6 @@ export const ALL_ROUTES = {
   ITEM: new RouteClass("ITEM", "/item/:urlName", <ItemPage />),
 }
 
-console.log(Object.entries(ALL_ROUTES).map(([key, value]) => `${key}: ${value.path}`));
-
 function App(): React.ReactElement {
   return (
     <PageContainer>

@@ -15,7 +15,7 @@ import theme from "../Theme";
 import { ItemsResponse, ItemSummary } from '../types/Backend';
 import InternalLink from './InternalLink';
 import PriceDifference from './PriceDifference';
-
+import ListFilter, { ListFilterLabel } from './aggrid/ListFilter';
 
 // Register the module
 ModuleRegistry.registerModules([
@@ -28,6 +28,16 @@ const GridCard = styled(Card)`
 `
 
 export default function ItemGrid({ data }: { data: ItemsResponse }) {
+
+    const tags = React.useMemo(() => {
+        const tagSet = new Set<string>();
+        data.items.forEach((item) => {
+            item.tags.forEach((tag) => {
+                tagSet.add(tag);
+            });
+        });
+        return tagSet;
+    }, [data.items]);
 
     return (<>
         <GridCard>
@@ -58,10 +68,14 @@ export default function ItemGrid({ data }: { data: ItemsResponse }) {
                         </FlexColumn>
                     },
                     {
-                        field: 'urlName', flex: 1, filter: true, cellRenderer: (params) => <InternalLink
+                        field: 'urlName',
+                        flex: 1,
+                        filter: true,
+                        cellRenderer: (params) => <InternalLink
                             to={ALL_ROUTES.ITEM.createUrl({
                                 urlName: params.value
-                            })}>{params.value}</InternalLink>
+                            })}>{params.value}</InternalLink>,
+                        sort: 'asc',
                     },
                     { field: "itemName", flex: 1, filter: true },
                     { field: 'minimumPrice', flex: 1, filter: true },
@@ -74,7 +88,14 @@ export default function ItemGrid({ data }: { data: ItemsResponse }) {
                             hideBraces
                         />
                     },
-                    { field: "tags", flex: 1, filter: true, valueFormatter: (params) => params.value?.join(", ") },
+                    {
+                        field: "tags",
+                        flex: 1,
+                        filterValueGetter: (params) => params.data?.tags ?? [],
+                        valueFormatter: (params) => params.data?.tags?.join(", ") ?? "",
+                        floatingFilterComponent: ListFilterLabel,
+                        filter: (filterProps) => <ListFilter {...filterProps} tags={tags} />,
+                    },
                     // { field: "timestamp", flex: 1, filter: true, valueFormatter: (params) => params.value ? new Date(params.value).toLocaleString() : "" }
                     { headerName: "Links", cellRenderer: ({ data }) => <Link href={`https://warframe.market/items/${data.urlName}`}>Market</Link> },
                 ]}
