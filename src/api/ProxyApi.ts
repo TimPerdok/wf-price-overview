@@ -1,7 +1,8 @@
 import EnvConfig from "../EnvConfig";
 import { ItemProfile, ItemsResponse } from "../types/Backend";
 
-export default class ProxyApi {
+export default class BackendApi {
+
     static async getItems(begin?: number, end?: number, filter?: object): Promise<ItemsResponse> {
         const searchParams = new URLSearchParams()
         begin && searchParams.set('begin', begin + "")
@@ -16,9 +17,22 @@ export default class ProxyApi {
         return json as ItemsResponse
     }
 
-    static async getItemProfile(urlName: string): Promise<ItemProfile | null> {
-        if (!urlName) return null;
-        const res = await fetch(`${EnvConfig.BACKEND_URL}/item/${urlName}`)
+    static async getItemProfileByUrlName(urlName: string): Promise<ItemProfile> {
+        if (!urlName) throw new Error("Item URL name is required")
+        const searchParams = new URLSearchParams();
+        searchParams.set('urlName', urlName);
+        
+        const res = await fetch(`${EnvConfig.BACKEND_URL}/item?${searchParams.toString()}`);
+        const json = await res.json()   
+        return json as ItemProfile
+    }
+
+    static async getItemProfileById(id: string): Promise<ItemProfile> {
+        if (!id) throw new Error("Item ID is required")
+        const searchParams = new URLSearchParams();
+        searchParams.set('id', id);
+
+        const res = await fetch(`${EnvConfig.BACKEND_URL}/item?${searchParams.toString()}`);
         const json = await res.json()   
         return json as ItemProfile
     }

@@ -1,7 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBackIos';
-import { Box, Button, Card, CardContent, CardHeader, Divider, Grid2, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, CircularProgress, Divider, Grid2, Stack, Typography } from '@mui/material';
 import React from 'react';
-import ProxyApi from '../../api/ProxyApi';
+import BackendApi from '../../api/ProxyApi';
 // @ts-ignore
 import wfMarketIcon from "../../assets/images/wf-market-512x512.webp";
 // @ts-ignore
@@ -14,36 +14,25 @@ import useApi from '../../hooks/useApi';
 import useNavigator from '../../hooks/useNavigator';
 import useUrlParams from '../../hooks/useUrlParams';
 import { ALL_ROUTES } from '../../main';
-import { Item, PriceMeasurement, SetItemProfile } from '../../types/Backend';
+import { Item, ItemProfile, PriceMeasurement, PriceMetadata } from '../../types/Backend';
 import PriceChart from './PriceChart';
 
 export default function ItemPage() {
     const { navigateTo } = useNavigator()
     const { urlName } = useUrlParams(ALL_ROUTES.ITEM)
-    const { data, error, isLoading } = useApi(() => ProxyApi.getItemProfile(urlName ?? ""), [urlName])
-    if (isLoading) return <div>Loading...</div>
+    const thisItemResponse = useApi(() => BackendApi.getItemProfileByUrlName(urlName ?? ""), [urlName])
 
-    const defaultItemProfile = {
-        item: { itemName: "", description: "", urlName: "" } as Partial<Item>,
-        prices: [] as PriceMeasurement[],
-        setItemProfiles: [] as SetItemProfile[]
-    };
-    const { item, prices, setItemProfiles } = data || defaultItemProfile
-    const { itemName, description } = item;
+    const setItemIds = thisItemResponse.data?.item?.itemsInSet ?? []
 
-    const setItemProfile = setItemProfiles.find(p => p.item.tags.includes("set"))
+    const setItemResponse = useApi(() => Promise.all([
+        ...setItemIds.map((itemId) => BackendApi.getItemProfileById(itemId)),
+    ]), [urlName, setItemIds])
 
-    const setNameToBaseName = (name: string) => name.replace(/ Set$/, "")
-    const itemNameToBaseName = (name: string) => {
-        const lastPart = name.split(" ").slice(-1)[0]
-        if (["Relic", "Imprint"].includes(lastPart)) name = name.split(" ").slice(0, -1).join(" ")
-        return name;
-    }
+    if (thisItemResponse.isLoading || setItemResponse.isLoading) return <CircularProgress />
+    if (thisItemResponse.error || setItemResponse.error) return <div>{thisItemResponse.error?.message ?? setItemResponse.error?.message}</div>;
 
-    const getWikiUrlName = (item: Partial<Item>) => {
-        if (item.wikiLink) return new URL(item.wikiLink).pathname.split("/").pop()
-        return encodeURIComponent(setItemProfile ? setNameToBaseName(setItemProfile.item.itemName) : itemNameToBaseName(itemName ?? ""))
-    }
+    const {item: thisItem, prices: thisPrices, metadata: thisMetadata} = thisItemResponse.data
+    const setItemProfiles = setItemResponse.data;
 
     return <>
         <FlexColumn $gapY='1rem'>
@@ -55,13 +44,13 @@ export default function ItemPage() {
                     <Stack direction="row" spacing={2}>
                         <Button variant="text"
                             startIcon={<Image src={wfMarketIcon} alt="Warframe Market" sx={{ height: "2rem", width: "2rem" }} />}
-                            href={`https://warframe.market/items/${item.urlName}`}>
+                            href={`https://warframe.market/items/${thisItem.urlName}`}>
                             Warframe market
                         </Button>
-                        {!!item.itemName
+                        {!!thisItem.itemName
                             && <Button variant="text"
                                 startIcon={<Image src={wfWikiIcon} alt="Warframe Wiki" sx={{ height: "1.2rem" }} />}
-                                href={`https://wiki.warframe.com/?search=${getWikiUrlName(item)}`}>
+                                href={thisItem.wikiLink ?? `https://wiki.warframe.com/?search=${thisItem.urlName}`}>
                                 Wiki
                             </Button>}
                     </Stack>
@@ -72,24 +61,24 @@ export default function ItemPage() {
                     <FlexRow>
                         <ItemImage
                             sx={{ minWidth: "100px" }}
-                            item={item}
+                            item={thisItem}
                         />
                         <CardHeader
-                            title={itemName}
-                            subheader={description} />
+                            title={thisItem.itemName}
+                            subheader={thisItem.description} />
                     </FlexRow>
                 </CardContent>
             </Card>
             <Card>
                 <CardHeader title="Price History" />
                 <CardContent>
-                    <PriceChart prices={prices}/>
+                    <PriceChart prices={thisPrices} />
                 </CardContent>
             </Card>
-            {setItemProfiles.length > 1 && <Card>
+            {(thisItem.itemsInSet.length ?? 0) > 1 && <Card>
                 <CardHeader title="Set Items" />
                 <CardContent>
-                    <SetItemsView setItemProfiles={setItemProfiles} />
+                    <SetItemsView itemProfiles={setItemProfiles} priceMetadata={thisMetadata} />
                 </CardContent>
             </Card>}
         </FlexColumn >
@@ -97,30 +86,27 @@ export default function ItemPage() {
 }
 
 
-function SetItemsView({ setItemProfiles }: { setItemProfiles: SetItemProfile[] }) {
-    const setItemProfile = setItemProfiles.find(p => p.item.isRoot) ?? setItemProfiles.find(p => p.item.tags.includes("set"))
-    const sortedItemsInSet = setItemProfiles.sort((a, b) => a.item.itemName.localeCompare(b.item.itemName))
-        .filter(p => p.item.id !== setItemProfile?.item.id)
-    const separateMinPrice = sortedItemsInSet.reduce((acc, p) => acc + (p.latestPrice.minimum * (p.item.quantityForSet ?? 1)), 0);
-    const difference = (setItemProfile?.latestPrice?.minimum ?? 0) - separateMinPrice;
+function SetItemsView({ itemProfiles, priceMetadata }: { itemProfiles: ItemProfile[], priceMetadata: PriceMetadata }) {
+    const rootItemProfile = itemProfiles.find(p => p.item.isRoot)
+    const separateItemProfiles = itemProfiles.filter(p => !p.item.isRoot)
+    if (!rootItemProfile) return <CircularProgress />
+    if (separateItemProfiles.length === 0) return <></>
 
     return <>
         <FlexColumn $gapY='1rem' $fullWidth>
             <Grid2 container>
-                {setItemProfile && <Grid2 size={{ xs: 12, sm: 6 }} alignContent={{ xs: "center" }}>
+                {rootItemProfile && <Grid2 size={{ xs: 12, sm: 6 }} alignContent={{ xs: "center" }}>
                     <FlexColumn $alignHorizontal='center'>
                         <Box sx={{ marginBottom: "1rem" }}>
-                            <ItemImage
-                                item={setItemProfile.item}
-                            />
+                            <ItemImage item={rootItemProfile.item} />
                         </Box>
-                        <ItemLink item={setItemProfile?.item} />
-                        {setItemProfile.latestPrice.minimum} platinum
+                        <ItemLink item={rootItemProfile.item} />
+                        {rootItemProfile.prices?.[0]?.minimum} platinum
                     </FlexColumn>
                 </Grid2>}
                 <Grid2>
                     <FlexColumn $gapY='1rem'>
-                        {sortedItemsInSet.map(p =>
+                        {separateItemProfiles.map(p =>
                             <SetItemView key={p.item.urlName} setItemProfile={p} />
                         )}
                     </FlexColumn>
@@ -130,17 +116,17 @@ function SetItemsView({ setItemProfiles }: { setItemProfiles: SetItemProfile[] }
                 <Box flexGrow={1}>
                     <Divider sx={{ marginBottom: "1rem" }} />
                     <Typography sx={{ marginRight: "0.5rem", display: "inline" }}>
-                        {setItemProfile?.latestPrice.minimum} platinum
+                        {priceMetadata.rootPrice} platinum
                         {" "}
-                        <PriceDifference difference={difference} invert />
+                        <PriceDifference small difference={priceMetadata.setPriceDifference} invert />
                     </Typography>
                 </Box>
                 <Box flexGrow={1}>
                     <Divider sx={{ marginBottom: "1rem" }} />
                     <Typography sx={{ marginRight: "0.5rem", display: "inline" }}>
-                        {separateMinPrice} platinum
+                        {priceMetadata.separatePrice} platinum
                         {" "}
-                        <PriceDifference difference={difference} />
+                        <PriceDifference small difference={priceMetadata.setPriceDifference} />
                     </Typography>
                 </Box>
             </FlexRow>
@@ -152,7 +138,8 @@ function ItemLink({ item }: { item: Item }) {
     return <InternalLink to={ALL_ROUTES.ITEM.createUrl({ urlName: item.urlName })}>{item.itemName}</InternalLink>
 }
 
-function SetItemView({ setItemProfile: { item, latestPrice } }: { setItemProfile: SetItemProfile }) {
+function SetItemView({ setItemProfile: { item, prices } }: { setItemProfile: ItemProfile }) {
+    const latestPrice = prices?.[0] ?? { minimum: 0, averageLastThreeSales: 0 }
     return <>
         <FlexRow $alignVertical="center">
             <Box sx={{ marginRight: 2, minWidth: "4rem" }}>

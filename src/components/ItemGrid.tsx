@@ -64,12 +64,15 @@ export default function ItemGrid({ data }: { data: ItemsResponse }) {
                             })}>{params.value}</InternalLink>
                     },
                     { field: "itemName", flex: 1, filter: true },
-                    { field: 'price.minimum', flex: 1, filter: true },
-                    { field: "price.averageLastThreeSales", flex: 1, filter: true },
+                    { field: 'minimumPrice', flex: 1, filter: true },
+                    { field: "averagePrice", flex: 1, filter: true },
                     {
                         field: "setPriceDifference",
                         flex: 1,
-                        filter: true
+                        filter: true,
+                        cellRenderer: (params) => <PriceDifference difference={params.data.setPriceDifference}
+                            hideBraces
+                        />
                     },
                     { field: "tags", flex: 1, filter: true, valueFormatter: (params) => params.value?.join(", ") },
                     // { field: "timestamp", flex: 1, filter: true, valueFormatter: (params) => params.value ? new Date(params.value).toLocaleString() : "" }

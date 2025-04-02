@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import ProxyApi from '../api/ProxyApi';
+import BackendApi from '../api/ProxyApi';
 import ItemGrid from '../components/ItemGrid';
 import LastUpdatedCard from '../components/LastUpdatedCard';
 import { FlexColumn } from '../components/layout/Flex';
@@ -17,7 +17,7 @@ export default function Home() {
 
     const fetchData = useCallback(() => {
         setIsLoading(true)
-        return ProxyApi.getItems()
+        return BackendApi.getItems()
             .then((data) => data && setLocalData(data))
             .then(() => {
                 setMetadata({ last_updated: new Date().toString() })

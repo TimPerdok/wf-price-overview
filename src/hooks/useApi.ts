@@ -1,11 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
 
-export default function useApi<ResultType>(apiCall: () => Promise<ResultType>, dependencies: any[]) {   
-    const [state, setState] = useState<{
-        data: ResultType | null,
-        error: any | null,
-        isLoading: boolean
-    }>({
+type UseApiResponse<ResultType> = {
+    data: ResultType,
+    error: null,
+    isLoading: false
+} | {
+    data: null,
+    error: Error,
+    isLoading: false
+} | {
+    data: null,
+    error: null,
+    isLoading: true
+}
+
+export default function useApi<ResultType>(
+    apiCall: () => Promise<ResultType>,
+    dependencies: any[]
+): UseApiResponse<ResultType> {
+    const [state, setState] = useState<UseApiResponse<ResultType>>({
         data: null,
         error: null,
         isLoading: true
@@ -16,9 +29,9 @@ export default function useApi<ResultType>(apiCall: () => Promise<ResultType>, d
             .then((data: ResultType) => {
                 setState({ data, error: null, isLoading: false })
             })
-            .catch((error) => {
+            .catch(((error: Error) => {
                 setState({ data: null, error, isLoading: false })
-            })
+            }))
     }, dependencies)
 
     return state

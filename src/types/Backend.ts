@@ -4,7 +4,8 @@ export type ItemsResponse = {
 }
 
 export type ItemSummary = Item & {
-    price: PriceMeasurement,
+    minimumPrice: number,
+    averagePrice: number,
     setPriceDifference: number,
 }
 
@@ -29,13 +30,14 @@ export type Item = {
     quantityForSet: number
 }
 
-export type SetItemProfile = {
-    item: Item,
-    latestPrice: PriceMeasurement,
-}
-
 export type ItemProfile = {
     item: Item,
     prices: PriceMeasurement[],
-    setItemProfiles: SetItemProfile[]
+    metadata: PriceMetadata
+}
+
+export type PriceMetadata = {
+    setPriceDifference: number,
+    separatePrice: number,
+    rootPrice: number
 }
