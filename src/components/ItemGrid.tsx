@@ -3,7 +3,7 @@ import { AgGridReact } from "ag-grid-react";
 import React from 'react';
 
 // Import ModuleRegistry and the required module
-import { Box, Card, Link } from '@mui/material';
+import { Box, Card, Link, Typography } from '@mui/material';
 import {
     AllCommunityModule,
     ModuleRegistry,
@@ -13,9 +13,9 @@ import { FlexColumn } from '../components/layout/Flex';
 import { ALL_ROUTES } from '../main';
 import theme from "../Theme";
 import { ItemsResponse, ItemSummary } from '../types/Backend';
-import InternalLink from './InternalLink';
-import PriceDifference from './PriceDifference';
 import ListFilter, { ListFilterLabel } from './aggrid/ListFilter';
+import InternalLink from './InternalLink';
+import match from '../monads/Match';
 
 // Register the module
 ModuleRegistry.registerModules([
@@ -84,9 +84,7 @@ export default function ItemGrid({ data }: { data: ItemsResponse }) {
                         field: "setPriceDifference",
                         flex: 1,
                         filter: true,
-                        cellRenderer: (params) => <PriceDifference difference={params.data.setPriceDifference}
-                            hideBraces
-                        />
+                        cellRenderer: ({ data }: { data: ItemSummary }) => <PriceDifference difference={data.setPriceDifference} />,
                     },
                     {
                         field: "tags",
@@ -107,4 +105,24 @@ export default function ItemGrid({ data }: { data: ItemsResponse }) {
             </AgGridReact >
         </GridCard >
     </>)
+}
+
+function PriceDifference({ difference, invert }: { difference: number, invert?: boolean }) {
+    const adjustedDifference = invert ? -difference : difference;
+
+    const color = match(
+        () => "text.secondary",
+        { condition: (value) => value > 0, action: () => "success.main" },
+        { condition: (value) => value < 0, action: () => "error.main" },
+    )(adjustedDifference);
+
+    const sign = match(
+        () => "",
+        { condition: (value) => value > 0, action: () => "+" },
+        { condition: (value) => value < 0, action: () => "" },
+    )(adjustedDifference);
+    
+    return <Typography variant='caption' color={color}>
+        {sign}{difference}
+    </Typography>
 }

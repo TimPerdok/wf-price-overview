@@ -9,7 +9,6 @@ import wfWikiIcon from "../../assets/images/wf-wiki-78px.webp";
 import Image, { ItemImage } from '../../components/Image';
 import InternalLink from '../../components/InternalLink';
 import { FlexColumn, FlexRow } from '../../components/layout/Flex';
-import PriceDifference from '../../components/PriceDifference';
 import useApi from '../../hooks/useApi';
 import useNavigator from '../../hooks/useNavigator';
 import useUrlParams from '../../hooks/useUrlParams';
@@ -31,7 +30,7 @@ export default function ItemPage() {
     if (thisItemResponse.isLoading || setItemResponse.isLoading) return <CircularProgress />
     if (thisItemResponse.error || setItemResponse.error) return <div>{thisItemResponse.error?.message ?? setItemResponse.error?.message}</div>;
 
-    const {item: thisItem, prices: thisPrices, metadata: thisMetadata} = thisItemResponse.data
+    const { item: thisItem, prices: thisPrices, metadata: thisMetadata } = thisItemResponse.data
     const setItemProfiles = setItemResponse.data;
 
     return <>
@@ -85,7 +84,6 @@ export default function ItemPage() {
     </>
 }
 
-
 function SetItemsView({ itemProfiles, priceMetadata }: { itemProfiles: ItemProfile[], priceMetadata: PriceMetadata }) {
     const rootItemProfile = itemProfiles.find(p => p.item.isRoot)
     const separateItemProfiles = itemProfiles.filter(p => !p.item.isRoot)
@@ -118,7 +116,7 @@ function SetItemsView({ itemProfiles, priceMetadata }: { itemProfiles: ItemProfi
                     <Typography sx={{ marginRight: "0.5rem", display: "inline" }}>
                         {priceMetadata.rootPrice} platinum
                         {" "}
-                        <PriceDifference small difference={priceMetadata.setPriceDifference} invert />
+                        <PriceDifference invert difference={priceMetadata.setPriceDifference} />
                     </Typography>
                 </Box>
                 <Box flexGrow={1}>
@@ -126,7 +124,7 @@ function SetItemsView({ itemProfiles, priceMetadata }: { itemProfiles: ItemProfi
                     <Typography sx={{ marginRight: "0.5rem", display: "inline" }}>
                         {priceMetadata.separatePrice} platinum
                         {" "}
-                        <PriceDifference small difference={priceMetadata.setPriceDifference} />
+                        <PriceDifference difference={priceMetadata.setPriceDifference} />
                     </Typography>
                 </Box>
             </FlexRow>
@@ -157,4 +155,14 @@ function SetItemView({ setItemProfile: { item, prices } }: { setItemProfile: Ite
             </FlexColumn>
         </FlexRow>
     </>
+}
+
+
+function PriceDifference({ difference, invert }: { difference: number, invert?: boolean }) {
+    const adjustedDifference = invert ? -difference : difference;
+    const sign = adjustedDifference > 0 ? "+" : "";
+    const color = adjustedDifference > 0 ? "success.main" : adjustedDifference < 0 ? "error.main" : "text.secondary";
+    return <Typography variant='caption' color={color}>
+       {sign}{adjustedDifference}
+    </Typography>
 }
