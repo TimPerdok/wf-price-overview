@@ -137,7 +137,7 @@ function ItemLink({ item }: { item: Item }) {
 }
 
 function SetItemView({ setItemProfile: { item, prices } }: { setItemProfile: ItemProfile }) {
-    const latestPrice = prices?.[0] ?? { minimum: 0, averageLastThreeSales: 0 }
+    const latestPrice = prices?.[prices.length - 1] ?? { minimum: 0, averageLastThreeSales: 0 }
     return <>
         <FlexRow $alignVertical="center">
             <Box sx={{ marginRight: 2, minWidth: "4rem" }}>
